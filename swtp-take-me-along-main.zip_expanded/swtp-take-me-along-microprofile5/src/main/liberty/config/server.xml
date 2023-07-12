@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="${project.name}">
+
+    <featureManager>
+        <feature>microProfile-5.0</feature>
+        <feature>persistence-3.0</feature>
+        <feature>transportSecurity-1.0</feature>
+    </featureManager>
+
+    <!-- https://openliberty.io/docs/latest/reference/config/server-configuration-overview.html -->
+    <variable name="default.http.port" defaultValue="9080" />
+    <variable name="default.https.port" defaultValue="9443" />
+    <variable name="app.context.root" defaultValue="/" />
+    <variable name="db.hostname" defaultValue="localhost" />
+
+    <jpa>
+        <defaultProperties>
+            <property name="eclipselink.cache.shared.default" value="false" />
+        </defaultProperties>
+    </jpa>
+
+    <webApplication location="take-me-along.war" contextRoot="${app.context.root}">
+        <classloader apiTypeVisibility="+third-party" />
+    </webApplication>
+    <httpEndpoint host="*" id="defaultHttpEndpoint" httpPort="${default.http.port}" httpsPort="${default.https.port}" />
+
+
+    <mpMetrics authentication="false" />
+
+    <!-- This is the keystore that will be used by SSL and by JWT. -->
+    <keyStore id="osmKeyStore" location="${server.config.dir}/public.jks" type="JKS" password="atbash" />
+
+    <keyStore id="defaultKeyStore" location="${server.config.dir}/key.p12" type="PKCS12" password="myPassword" />
+    <!---->
+    <ssl id="defaultSSLConfig" keyStoreRef="defaultKeyStore" trustDefaultCerts="true" />
+
+    <library id="jdbcLib">
+        <fileset dir="${server.config.dir}" includes="*.jar" />
+    </library>
+
+    <dataSource id="mysql" jndiName="jdbc/mysql">
+        <jdbcDriver libraryRef="jdbcLib" />
+        <properties serverName="${db.hostname}" portNumber="3306" databaseName="swtp" user="root" password="root" />
+    </dataSource>
+    <!-- The MP JWT configuration that injects the caller's JWT into a ResourceScoped bean for inspection. -->
+    <mpJwt id="jwtUserConsumer" keyName="theKeyId" audiences="targetService" issuer="${jwt.issuer}" />
+
+    <logging traceSpecification="JPA=all" />
+</server>

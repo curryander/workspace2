@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Carpooling</title>
+
+        <link rel="icon" href="/favicon.ico" />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+            integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+            crossorigin=""
+        />
+        <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script
+            src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+            crossorigin=""
+        ></script>
+
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+    </head>
+
+    <body>
+        <div id="grid-container">
+            <header class="">
+                <div class="site-header__wrapper">
+                    <div class="inline-block">
+                        <a href="#" class="brand"><img src="favicon.ico" alt="brand" /></a>
+                        <h1>Carpooling</h1>
+                    </div>
+
+                    <div id="loggedIn" class="hidden flex-space-between">
+                        <nav class="top-nav">
+                            <ul>
+                                <li>
+                                    <a href="javascript:setAsideContent(1)">Mitfahrgelenheiten</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:setAsideContent(2)">Mein Stundenplan</a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div id="userInfo" class="user-info">
+                            <p id="welcomeMessage">Willkommen Testaccount!</p>
+                            <img src="img/profile.jpg" id="profilePic" alt="Profilbild" width="60" heigth="60" />
+
+                            <button id="logoutBtn" class="material-btn">Abmelden</button>
+                        </div>
+                    </div>
+
+                    <div id="loggedOut" class="">
+                        <table align="center">
+                            <tr>
+                                <td>Name:</td>
+                                <td>
+                                    <input id="loginUsername" size="20" type="text" required />
+                                </td>
+                                <td>&emsp; Passwort:</td>
+                                <td>
+                                    <input id="loginPassword" size="20" type="password" required />
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <button id="loginBtn" class="material-btn">Login</button>
+                                </td>
+                                <td>
+                                    <button class="material-btn" onclick="toggleRegisterModal()" id="registerBtn">
+                                        Register
+                                    </button>
+                                    <!--<a id="registerLink" href="javascript:">Register</a>-->
+                                </td>
+                                <td>
+                                    <small id="loginError"></small>
+                                    <!--<a id="registerLink" href="javascript:">Register</a>-->
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </header>
+
+            <main id="map-container" style="width: 100%; height: auto"></main>
+
+            <aside id="aside" style="padding: 1rem">
+                <div id="find-ride-container" class="hidden" style="width: 25rem">
+                    <h3>Eine Mitfahrgelegenheit suchen</h3>
+
+                    <div class="search-options-grid">
+                        <label for="ingress">Hinfahrt</label>
+                        <input
+                            type="radio"
+                            id="ingress"
+                            name="journey"
+                            value="0"
+                            onchange="journeyTypeChanged()"
+                            checked
+                        />
+                        <label for="outgress">Rückfahrt</label>
+                        <input type="radio" id="outgress" name="journey" value="1" onchange="journeyTypeChanged()" />
+                        <label for="inoutgress">Hin- + Rückfahrt</label>
+                        <input type="radio" id="inoutgress" name="journey" value="2" onchange="journeyTypeChanged()" />
+
+                        <label for="radius">Umkreis</label>
+                        <span>
+                            <input type="range" id="radius" min="1" max="50" value="20" class="slider" />
+                            <small>20km</small>
+                        </span>
+
+                        <label for="weekday">Wochentag</label>
+                        <select name="weekday" id="weekday">
+                            <option value="1">Montag</option>
+                            <option value="2">Dienstag</option>
+                            <option value="3">Mittwoch</option>
+                            <option value="4">Donnerstag</option>
+                            <option value="5">Freitag</option>
+                            <option value="6">Samstag</option>
+                            <option value="7">Sonntag</option>
+                        </select>
+
+                        <label for="latestArrival">Späteste Ankunft</label>
+                        <input type="time" name="latestArrival" id="latestArrival" autocomplete="on" value="08:00" />
+
+                        <label for="earliestReturn">Frühste Abreise</label>
+                        <input
+                            type="time"
+                            name="earliestReturn"
+                            id="earliestReturn"
+                            autocomplete="on"
+                            value="16:00"
+                            disabled
+                        />
+                    </div>
+                    <button id="searchBtn" class="material-btn" type="button">Suchen</button>
+                    <br />
+                    <hr style="border-color: black" />
+                    <div id="searchResults">
+                        <div class="card">
+                            <div class="card-header">
+                                <img src="img/profile.jpg" class="" alt="Profilbild" />
+                                <div>Test user</div>
+                            </div>
+                            <div class="card-main">
+                                <div>test@stud.hs-kl.de</div>
+                                <div>9:00 - 14:00</div>
+                                <div>Teststraße 2, 67655 Teststadt</div>
+                                <span>6km</span>
+                                <div class="main-description">name</div>
+                            </div>
+                        </div>
+                        <div class="card selected-card">
+                            <div class="card-header">
+                                <img src="img/profile.jpg" class="material-icons" alt="Profilbild" />
+                                <div>Test user</div>
+                            </div>
+                            <div class="card-main">
+                                <div>test@stud.hs-kl.de</div>
+                                <div>9:00 - 14:00</div>
+                                <div>Teststraße 2, 67655 Teststadt</div>
+                                <span>6km</span>
+                                <div class="main-description">name</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="timetable-container" class="hidden" style="width: 25rem">
+                    <h2>Meine Adresse</h2>
+                    <div id="myAddress">Teststraße 1, 01234 Teststadt</div>
+                    <h2 class="">Mein Stundenplan</h2>
+
+                    <div class="timetable-grid">
+                        <h4>Wochentag</h4>
+                        <h4>Beginn</h4>
+                        <h4>Ende</h4>
+
+                        <p>Montag</p>
+                        <input type="time" step="60000" id="begin1" size="8" />
+                        <input type="time" step="60000" id="end1" size="8" />
+
+                        <p text-align="center">Dienstag</p>
+                        <input type="time" step="60000" id="begin2" size="8" />
+                        <input type="time" step="60000" id="end2" size="8" />
+
+                        <p>Mitwoch</p>
+                        <input type="time" step="60000" id="begin3" size="8" />
+                        <input type="time" step="60000" id="end3" size="8" />
+
+                        <p>Donnerstag</p>
+                        <input type="time" step="60000" id="begin4" size="8" />
+                        <input type="time" step="60000" id="end4" size="8" />
+
+                        <p>Freitag</p>
+                        <input type="time" step="60000" id="begin5" size="8" />
+                        <input type="time" step="60000" id="end5" size="8" />
+
+                        <p>Samstag</p>
+                        <input type="time" step="60000" id="begin6" size="8" />
+                        <input type="time" step="60000" id="end6" size="8" />
+
+                        <p>Sonntag</p>
+                        <input type="time" step="60000" id="begin7" size="8" />
+                        <input type="time" step="60000" id="end7" size="8" />
+                    </div>
+
+                    <div class="flex-space-between">
+                        <button id="saveTimetableBtn" class="material-btn" type="submit">Speichern</button>
+                        <button id="resetTimetableBtn" class="material-btn">Zurücksetzen</button>
+                    </div>
+                    <div id="timetable-error" class=""></div>
+                </div>
+            </aside>
+
+            <div id="registerModal" class="hidden centered-modal">
+                <form>
+                    <div class="form-field">
+                        <label for="name">Vorname:</label>
+                        <input type="text" name="name" id="name" autocomplete="on" required onchange="checkName()" />
+                        <small></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="surname">Nachname:</label>
+                        <input
+                            type="text"
+                            name="surname"
+                            id="surname"
+                            autocomplete="on"
+                            required
+                            onchange="checkSurName()"
+                        />
+                        <small></small>
+                    </div>
+
+                    <div class="form-field-line">
+                        <div class="form-field">
+                            <label for="street">Straße:</label>
+                            <input
+                                type="text"
+                                name="street"
+                                id="street"
+                                autocomplete="on"
+                                required
+                                onchange="checkStreet()"
+                            />
+                            <small></small>
+                        </div>
+                        <div class="form-field" style="width: 3rem">
+                            <label for="streetNum">Nr:</label>
+                            <input
+                                type="number"
+                                name="streetNum"
+                                id="streetNum"
+                                autocomplete="on"
+                                required
+                                onchange="checkStreetNum()"
+                            />
+                            <small></small>
+                        </div>
+                    </div>
+                    <div class="form-field-line">
+                        <div class="form-field">
+                            <label for="plz">PLZ:</label>
+                            <input
+                                type="number"
+                                name="plz"
+                                id="plz"
+                                autocomplete="off"
+                                required
+                                onchange="checkPlz()"
+                                oninput="getPlzSuggestions(this.value)"
+                                placeholder="01234"
+                            />
+                            <small></small>
+                        </div>
+                        <div class="form-field">
+                            <label for="city">Ort:</label>
+                            <input
+                                type="text"
+                                name="city"
+                                id="city"
+                                autocomplete="off"
+                                required
+                                onchange="checkCity()"
+                            />
+                            <small></small>
+                        </div>
+                        <div class="autocomplete-list" id="plzSuggestions"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="email">E-Mail:</label>
+                        <input type="email" name="email" id="email" required onchange="checkEmail()" />
+                        <small></small>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="ppicture">Profilbild:</label>
+                        <input
+                            type="file"
+                            name="ppicture"
+                            id="ppicture"
+                            accept="image/png, image/jpeg, image/jpeg"
+                            required
+                        />
+                        <small></small>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required onchange="checkUsername()" />
+                        <small></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="password">Passwort:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            oninput="checkPasswordStrength()"
+                            onchange="checkPassword()"
+                        />
+                        <div id="password-strength-indicator" class="password-strength-indicator">
+                            <span class="shit"></span>
+                            <span class="weak"></span>
+                            <span class="medium"></span>
+                            <span class="good"></span>
+                            <span class="strong"></span>
+                        </div>
+                        <small></small>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="material-btn" id="submitRegistrationBtn">
+                        Registrieren
+                    </button>
+                </form>
+                <div class="button-margin">
+                    <button id="closeButton" class="material-btn" onclick="toggleRegisterModal()">Abbrechen</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="js/service/user-service.js"></script>
+        <script type="text/javascript" src="js/service/auth-service.js"></script>
+        <script type="text/javascript" src="js/service/plz-service.js"></script>
+
+        <script type="text/javascript" src="js/script.js"></script>
+        <script type="text/javascript" src="js/register.js"></script>
+        <script type="text/javascript" src="js/search.js"></script>
+        <script type="text/javascript" src="js/timetable.js"></script>
+    </body>
+</html>

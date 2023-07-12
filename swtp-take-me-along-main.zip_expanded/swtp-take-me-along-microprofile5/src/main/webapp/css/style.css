@@ -1,0 +1,554 @@
+@charset "UTF-8";
+
+:root {
+    --error-color: #dc3545;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#grid-container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: min-content 2fr min-content;
+    grid-template-columns: 100%;
+    grid-template-areas:
+        "header"
+        "main"
+        "aside";
+}
+
+@media screen and (min-width: 44em) {
+    #grid-container {
+        height: 100%;
+        display: grid;
+        grid-template-rows: min-content 1fr;
+        grid-template-columns: 1fr min-content;
+        grid-template-areas:
+            "header header"
+            "main   aside";
+    }
+}
+
+header {
+    background-color: #c2c2c2;
+    grid-area: header;
+    /*z-index: 1000;*/
+    box-shadow: 0 1px 5px #27272780;
+    min-height: 1.5rem;
+}
+
+.site-header__wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.flex-space-between {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+#loggedIn,
+#loggedOut {
+    margin: auto;
+    margin-left: 2em;
+}
+
+.top-nav {
+    margin-right: auto;
+    order: -1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.inline-block > * {
+    display: inline-block;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    flex-wrap: wrap;
+}
+
+.user-info * {
+    margin: auto 1em;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav li a {
+    color: #000;
+    display: inline-block;
+    padding: 0.5em 1.5em;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #b1b1b1e0;
+}
+
+main {
+    background-color: #f3e2a9;
+    grid-area: main;
+}
+
+aside {
+    background-color: #f0f0f0;
+    grid-area: aside;
+    z-index: 900;
+    box-shadow: 0 1px 5px #27272780;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/*
+aside > * {
+}
+*/
+
+.hidden {
+    display: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+#userInfo > img {
+    height: 100%;
+    padding: 0.5em;
+}
+
+header img {
+    border-radius: 50%;
+}
+
+/*
+ * user cards
+ */
+
+.card {
+    margin-bottom: 0.2em;
+    background-color: white;
+    width: auto;
+    border: 1px solid #757700;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+}
+
+.selected-card {
+    box-shadow: 4px 3px 8px 1px #969696;
+    -webkit-box-shadow: 4px 3px 8px 1px #969696;
+    background-color: #2c2c2c3b;
+}
+
+.card-main {
+    padding: 5px;
+    width: auto;
+    overflow: hidden;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+
+.card-header {
+    width: 7em;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    border-right: 1px solid #292424;
+    background-color: whitesmoke;
+    padding: 5px;
+}
+
+.card img {
+    margin: 0px;
+}
+
+#searchResults {
+    margin-top: 1vw;
+    padding: 0px;
+}
+
+/*
+ * Register Modal
+*/
+.centered-modal {
+    padding: 3em;
+    background-color: beige;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    overflow: auto;
+    max-height: 75vw;
+}
+
+.form {
+    padding: 10px 20px;
+}
+
+.form h1 {
+    font-size: 1.5em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-field {
+    margin-bottom: 5px;
+    flex: auto;
+    position: relative;
+}
+
+.form-field label {
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.form-field input {
+    width: 100%;
+    border: solid 2px #f0f0f0;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    display: block;
+}
+
+.form-field input:focus {
+    outline: none;
+}
+
+.form-field.error input {
+    border-color: var(--error-color);
+}
+
+.form-field.success input {
+    border-color: var(--success-color);
+}
+
+.form-field small {
+    color: var(--error-color);
+}
+
+.form-field #plz {
+    width: 5rem;
+}
+
+.form-field #city {
+    min-width: 10rem;
+}
+
+::placeholder {
+    opacity: 0.5;
+}
+
+.form-field-line {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: space-evenly;
+}
+
+.form-field-line > * {
+    flex: auto;
+}
+
+/*
+ * plz autocomplete
+*/
+.autocomplete-list {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 22vw;
+    width: 100%;
+}
+
+.autocomplete-list div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+/*when hovering an item:*/
+.autocomplete-list div:hover {
+    background-color: #e9e9e9;
+}
+
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+/* pw indicator */
+form .password-strength-indicator {
+    height: 10px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+form .password-strength-indicator span {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background: lightgrey;
+    border-radius: 5px;
+}
+
+form .password-strength-indicator span:nth-child(2) {
+    margin: 0 3px;
+}
+
+form .password-strength-indicator span.active:before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.password-strength-indicator span.shit:before {
+    background-color: red;
+}
+.password-strength-indicator span.weak:before {
+    background-color: rgb(250, 101, 2);
+}
+.password-strength-indicator span.medium:before {
+    background-color: orange;
+}
+.password-strength-indicator span.good:before {
+    background-color: yellow;
+}
+.password-strength-indicator span.strong:before {
+    background-color: #23ad5c;
+}
+
+/* seatch options */
+.search-options-grid {
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1vw;
+}
+
+.search-options-grid > * {
+    text-align: left;
+}
+
+/*
+ * timetable
+*/
+.timetable-grid {
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1vw;
+}
+
+.timetable-grid > p {
+    vertical-align: text-bottom;
+    text-align: left;
+}
+
+/* button */
+.material-btn {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+    padding: 0 16px;
+    min-width: 64px;
+    height: 36px;
+    vertical-align: middle;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    color: white;
+    background-color: rgb(33, 150, 243);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 36px;
+    overflow: hidden;
+    outline: none;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.material-btn::-moz-focus-inner {
+    border: none;
+}
+
+/* Overlay */
+.material-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(255, 255, 255);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* Ripple */
+.material-btn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    padding: 50%;
+    width: 32px;
+    height: 32px;
+    background-color: rgb(255, 255, 255);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+    transition: opacity 1s, transform 0.5s;
+}
+
+/* Hover, Focus */
+.material-btn:hover,
+.material-btn:focus {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.material-btn:hover::before {
+    opacity: 0.08;
+}
+
+.material-btn:focus::before {
+    opacity: 0.24;
+}
+
+.material-btn:hover:focus::before {
+    opacity: 0.3;
+}
+
+/* Active */
+.material-btn:active {
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.material-btn:active::after {
+    opacity: 0.32;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0s;
+}
+
+/* Disabled */
+.material-btn:disabled {
+    color: rgba(0, 0, 0, 0.38);
+    background-color: rgba(0, 0, 0, 0.12);
+    box-shadow: none;
+    cursor: initial;
+}
+
+.material-btn:disabled::before {
+    opacity: 0;
+}
+
+.material-btn:disabled::after {
+    opacity: 0;
+}
+
+.button-margin {
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+}
+
+/* autocomplete suggestions box */
+
+#plzSuggestions ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+#plzSuggestions ul li {
+    padding: 5px 0;
+}
+#plzSuggestions ul li:hover {
+    background: #eee;
+}
+
+#searchBtn {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+#timetable-error {
+    color: var(--error-color);
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+#myAddress {
+    margin-bottom: 1rem;
+    width: 100%;
+}
